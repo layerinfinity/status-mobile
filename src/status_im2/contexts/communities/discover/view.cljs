@@ -3,6 +3,7 @@
             [oops.core :as oops] ;; TODO move to status-im2
             [quo2.core :as quo]
             [quo2.foundations.colors :as colors]
+            [quo2.components.separator :as separator]
             [react-native.core :as rn]
             [react-native.safe-area :as safe-area]
             [reagent.core :as reagent]
@@ -84,6 +85,24 @@
                        colors/neutral-50
                        colors/neutral-40)}]])
 
+(defn discover-communities-segments
+  [selected-tab]
+  [:<>
+   [quo/separator]
+   [rn/view
+    {:style {:padding-vertical   12
+             :margin-bottom      4
+             :margin-top         12
+             :height             56}}
+    [quo/tabs
+     {:size           32
+      :on-change      #(reset! selected-tab %)
+      :default-active :joined
+      :data           [{:id :all   :label (i18n/label :t/all)   :accessibility-label :all-communities-tab}
+                       {:id :open  :label (i18n/label :t/open)  :accessibility-label :open-communities-tab}
+                       {:id :gated :label (i18n/label :t/gated) :accessibility-label :gated-communities-tab}]}]]])
+
+
 (defn featured-list
   [communities view-type]
   (let [view-size (reagent/atom 0)]
@@ -94,8 +113,8 @@
                     :width          "100%"
                     :margin-bottom  24}
         :on-layout #(swap! view-size
-                      (fn []
-                        (oops/oget % "nativeEvent.layout.width")))}
+                           (fn []
+                             (oops/oget % "nativeEvent.layout.width")))}
        (when-not (= @view-size 0)
          [rn/flat-list
           {:key-fn                            :id
@@ -110,34 +129,58 @@
                                                :view-type view-type}}])])))
 
 (defn other-communities-list
-  [communities view-type]
+  [communities view-type selected-tab]
   [rn/flat-list
    {:key-fn                            :id
     :keyboard-should-persist-taps      :always
-    :shows-horizontal-scroll-indicator false
+    :shows-vertical-scroll-indicator   false
     :separator                         [rn/view {:margin-bottom 16}]
     :data                              communities
+    :header                            (discover-communities-segments selected-tab)
+    :sticky-header-indices             [0]
     :render-fn                         render-fn
     :render-data                       {:featured? false
                                         :width     "100%"
                                         :view-type view-type}}])
 
+(defn discover-communities-list
+  [selected-tab view-type]
+  (let [ids-by-user-involvement (rf/sub [:communities/community-ids-by-user-involvement])
+        all-communities         (rf/sub [:communities/sorted-communities])
+        tab                     @selected-tab]
+    [rn/view
+     {:style {:flex             1
+              :padding-vertical 12}}
+     (case tab
+       :all
+       [other-communities-list all-communities view-type]
+
+       :open
+       [other-communities-list (:open ids-by-user-involvement) view-type]
+
+       :gated
+       [other-communities-list (:gated ids-by-user-involvement) view-type]
+
+       [quo/information-box
+        {:type :error
+         :icon :i/info}
+        (i18n/label :t/error)])]))
+
 (defn discover
   []
-  (let [view-type (reagent/atom :card-view)]
+  (let [view-type (reagent/atom :card-view)
+        selected-tab (reagent/atom :all)]
     (fn []
-      (let [communities                (rf/sub [:communities/sorted-communities])
-            featured-communities       (rf/sub [:communities/featured-communities])
+      (let [featured-communities       (rf/sub [:communities/featured-communities])
             featured-communities-count (count featured-communities)]
         [safe-area/consumer
          (fn []
            [rn/view
-            {:style {:margin-left      20
-                     :margin-right     20
-                     :flex             1
-                     :background-color (colors/theme-colors
-                                        colors/white
-                                        colors/neutral-90)}}
+            {:style {:flex               1
+                     :padding-horizontal 20
+                     :background-color   (colors/theme-colors
+                                          colors/neutral-30
+                                          colors/neutral-90)}}
             [quo/button
              {:icon     true
               :type     :grey
@@ -148,4 +191,4 @@
             [screen-title]
             [featured-communities-header featured-communities-count]
             [featured-list featured-communities @view-type]
-            [other-communities-list communities @view-type]])]))))
+            [discover-communities-list selected-tab @view-type]])]))))

@@ -51,7 +51,7 @@
     :get-item-layout                   get-item-layout-js
     :keyboard-should-persist-taps      :always
     :shows-horizontal-scroll-indicator false
-    :data                              community-ids
+    :data                              community-ids 
     :render-fn                         render-fn}])
 
 (defn segments-community-lists
