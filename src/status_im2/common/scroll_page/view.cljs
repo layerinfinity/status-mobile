@@ -70,7 +70,6 @@
            :one-icon-align-left?    true
            :align-mid?              false
            :page-nav-color          :transparent
-           :page-nav-background-uri ""
            :mid-section             {:type            :text-with-description
                                      :main-text       nil
                                      :description-img nil}
@@ -78,8 +77,7 @@
            :left-section            {:icon                  :i/close
                                      :icon-background-color (icon-color)
                                      :on-press              #(rf/dispatch [:navigate-back])}}]
-         (when sticky-header [sticky-header @scroll-height])
-        ]]))])
+         (when sticky-header [sticky-header @scroll-height])]]))])
 
 (defn scroll-page
   [cover page-nav name]
@@ -99,10 +97,9 @@
              {:style                           (style/scroll-view-container
                                                 (diff-with-max-min @scroll-height 16 0))
               :shows-vertical-scroll-indicator false
-              :scroll-event-throttle           4
-              :on-scroll                       #(swap! scroll-height
-                                                  (fn []
-                                                    (int (oops/oget % "nativeEvent.contentOffset.y"))))}
+              :scroll-event-throttle           8
+              :on-scroll                       (fn [event]
+                                                 (reset! scroll-height (int (oops/oget event "nativeEvent.contentOffset.y"))))}
              [rn/view {:style {:height 151}}
               [rn/image
                {:source cover
@@ -122,4 +119,5 @@
                   {:source cover
                    :style  style/display-picture}]]
                 [children]])]]))])))
+
 
