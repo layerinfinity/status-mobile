@@ -3,7 +3,6 @@
             [oops.core :as oops] ;; TODO move to status-im2
             [quo2.core :as quo]
             [quo2.foundations.colors :as colors]
-            [quo2.components.separator :as separator]
             [react-native.core :as rn]
             [react-native.safe-area :as safe-area]
             [reagent.core :as reagent]
@@ -52,7 +51,8 @@
   []
   [rn/view
    {:height           56
-    :padding-vertical 12}
+    :padding-vertical 12
+    :justify-content  :center}
    [quo/text
     {:accessibility-label :communities-screen-title
      :weight              :semi-bold
@@ -64,6 +64,7 @@
   [rn/view
    {:flex-direction  :row
     :height          30
+    :padding-top     8
     :margin-bottom   8
     :justify-content :space-between}
    [rn/view
@@ -87,20 +88,20 @@
 
 (defn discover-communities-segments
   [selected-tab]
-  [:<>
-   [quo/separator]
-   [rn/view
-    {:style {:padding-vertical   12
-             :margin-bottom      4
-             :margin-top         12
-             :height             56}}
-    [quo/tabs
-     {:size           32
-      :on-change      #(reset! selected-tab %)
-      :default-active :joined
-      :data           [{:id :all   :label (i18n/label :t/all)   :accessibility-label :all-communities-tab}
-                       {:id :open  :label (i18n/label :t/open)  :accessibility-label :open-communities-tab}
-                       {:id :gated :label (i18n/label :t/gated) :accessibility-label :gated-communities-tab}]}]]])
+  [rn/view
+   {:style {:padding-vertical 12
+            :margin-bottom    4
+            :margin-top       12
+            :height           56}}
+   [quo/tabs
+    {:size           32
+     :on-change      #(reset! selected-tab %)
+     :default-active :joined
+     :data           [{:id :all :label (i18n/label :t/all) :accessibility-label :all-communities-tab}
+                      {:id :open :label (i18n/label :t/open) :accessibility-label :open-communities-tab}
+                      {:id                  :gated
+                       :label               (i18n/label :t/gated)
+                       :accessibility-label :gated-communities-tab}]}]])
 
 
 (defn featured-list
@@ -129,19 +130,17 @@
                                                :view-type view-type}}])])))
 
 (defn other-communities-list
-  [communities view-type selected-tab]
+  [communities view-type]
   [rn/flat-list
-   {:key-fn                            :id
-    :keyboard-should-persist-taps      :always
-    :shows-vertical-scroll-indicator   false
-    :separator                         [rn/view {:margin-bottom 16}]
-    :data                              communities
-    :header                            (discover-communities-segments selected-tab)
-    :sticky-header-indices             [0]
-    :render-fn                         render-fn
-    :render-data                       {:featured? false
-                                        :width     "100%"
-                                        :view-type view-type}}])
+   {:key-fn                          :id
+    :keyboard-should-persist-taps    :always
+    :shows-vertical-scroll-indicator false
+    :separator                       [rn/view {:margin-bottom 16}]
+    :data                            communities
+    :render-fn                       render-fn
+    :render-data                     {:featured? false
+                                      :width     "100%"
+                                      :view-type view-type}}])
 
 (defn discover-communities-list
   [selected-tab view-type]
@@ -149,8 +148,7 @@
         all-communities         (rf/sub [:communities/sorted-communities])
         tab                     @selected-tab]
     [rn/view
-     {:style {:flex             1
-              :padding-vertical 12}}
+     {:style {:flex 1}}
      (case tab
        :all
        [other-communities-list all-communities view-type]
@@ -168,7 +166,7 @@
 
 (defn discover
   []
-  (let [view-type (reagent/atom :card-view)
+  (let [view-type    (reagent/atom :card-view)
         selected-tab (reagent/atom :all)]
     (fn []
       (let [featured-communities       (rf/sub [:communities/featured-communities])
@@ -179,8 +177,8 @@
             {:style {:flex               1
                      :padding-horizontal 20
                      :background-color   (colors/theme-colors
-                                          colors/neutral-30
-                                          colors/neutral-90)}}
+                                          colors/white
+                                          colors/neutral-95)}}
             [quo/button
              {:icon     true
               :type     :grey
@@ -190,5 +188,7 @@
              :i/close]
             [screen-title]
             [featured-communities-header featured-communities-count]
-            [featured-list featured-communities @view-type]
+            [featured-list featured-communities view-type]
+            [quo/separator]
+            [discover-communities-segments selected-tab]
             [discover-communities-list selected-tab @view-type]])]))))
