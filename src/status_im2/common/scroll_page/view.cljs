@@ -114,7 +114,7 @@
         {:style                           (style/scroll-view-container
                                            (diff-with-max-min @scroll-height 16 0))
          :shows-vertical-scroll-indicator false
-         :scroll-event-throttle           8
+         :scroll-event-throttle           16
          :on-scroll                       (fn [event]
                                             (reset! scroll-height (int
                                                                    (oops/oget
