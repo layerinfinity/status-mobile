@@ -8,7 +8,22 @@
             [reagent.core :as reagent]
             [status-im.react-native.resources :as resources]
             [status-im.ui.screens.communities.community :as community]
+            [status-im.ui.components.react :as react]
+            [react-native.platform :as platform]
+            [status-im2.common.scroll-page.style :as style]
+            [status-im2.common.scroll-page.view :as scroll-page-view]
             [utils.re-frame :as rf]))
+
+(def negative-scroll-position-0 (if platform/ios? -44 0))
+(def scroll-position-0 (if platform/ios? 44 0))
+
+(defn diff-with-max-min
+  [value maximum minimum]
+  (->>
+   (+ value scroll-position-0)
+   (- maximum)
+   (max minimum)
+   (min maximum)))
 
 (def mock-community-item-data  ;; TODO: remove once communities are loaded with this data.
   {:data {:community-color "#0052FF"
@@ -129,35 +144,63 @@
                                                :width     @view-size
                                                :view-type view-type}}])])))
 
+
+(defn discover-communities-header
+  [{:keys [featured-communities-count
+           featured-communities
+           view-type
+           selected-tab]}]
+  [react/animated-view
+   [screen-title]
+   [featured-communities-header featured-communities-count]
+   [featured-list featured-communities view-type]
+   [quo/separator]
+   [discover-communities-segments selected-tab]])
+
 (defn other-communities-list
-  [communities view-type]
+  [communities view-type scroll-height]
   [rn/flat-list
    {:key-fn                          :id
     :keyboard-should-persist-taps    :always
     :shows-vertical-scroll-indicator false
     :separator                       [rn/view {:margin-bottom 16}]
     :data                            communities
+    :scroll-event-throttle           8
     :render-fn                       render-fn
     :render-data                     {:featured? false
                                       :width     "100%"
-                                      :view-type view-type}}])
+                                      :view-type view-type}
+    :on-scroll                       (fn [event]
+                                       (reset! scroll-height (int
+                                                              (oops/oget
+                                                               event
+                                                               "nativeEvent.contentOffset.y"))))}])
+
 
 (defn discover-communities-list
   [selected-tab view-type]
   (let [ids-by-user-involvement (rf/sub [:communities/community-ids-by-user-involvement])
         all-communities         (rf/sub [:communities/sorted-communities])
-        tab                     @selected-tab]
-    [rn/view
-     {:style {:flex 1}}
+        tab                     @selected-tab
+        scroll-height              (reagent/atom negative-scroll-position-0)
+        featured-communities       (rf/sub [:communities/featured-communities])
+        featured-communities-count (count featured-communities)
+        sticky-header              [discover-communities-header
+                                    {:featured-communities-count featured-communities-count
+                                     :featured-communities       featured-communities
+                                     :view-type                  view-type
+                                     :selected-tab               selected-tab}]]
+    [rn/view {:style {:flex 1}}
+     [scroll-page-view/scroll-page-header scroll-height nil nil nil nil]
      (case tab
        :all
-       [other-communities-list all-communities view-type]
+       [other-communities-list all-communities view-type scroll-height]
 
        :open
-       [other-communities-list (:open ids-by-user-involvement) view-type]
+       [other-communities-list (:open ids-by-user-involvement) view-type scroll-height]
 
        :gated
-       [other-communities-list (:gated ids-by-user-involvement) view-type]
+       [other-communities-list (:gated ids-by-user-involvement) view-type scroll-height]
 
        [quo/information-box
         {:type :error
@@ -169,26 +212,19 @@
   (let [view-type    (reagent/atom :card-view)
         selected-tab (reagent/atom :all)]
     (fn []
-      (let [featured-communities       (rf/sub [:communities/featured-communities])
-            featured-communities-count (count featured-communities)]
-        [safe-area/consumer
-         (fn []
-           [rn/view
-            {:style {:flex               1
-                     :padding-horizontal 20
-                     :background-color   (colors/theme-colors
-                                          colors/white
-                                          colors/neutral-95)}}
-            [quo/button
-             {:icon     true
-              :type     :grey
-              :size     32
-              :style    {:margin-vertical 12}
-              :on-press #(rf/dispatch [:navigate-back])}
-             :i/close]
-            [screen-title]
-            [featured-communities-header featured-communities-count]
-            [featured-list featured-communities view-type]
-            [quo/separator]
-            [discover-communities-segments selected-tab]
-            [discover-communities-list selected-tab @view-type]])]))))
+      [safe-area/consumer
+       (fn []
+         [rn/view
+          {:style {:flex               1
+                   :padding-horizontal 20
+                   :background-color   (colors/theme-colors
+                                        colors/white
+                                        colors/neutral-95)}}
+          [quo/button
+           {:icon     true
+            :type     :grey
+            :size     32
+            :style    {:margin-vertical 12}
+            :on-press #(rf/dispatch [:navigate-back])}
+           :i/close]
+          [discover-communities-list selected-tab @view-type]])])))
