@@ -80,6 +80,50 @@
                                      :on-press              #(rf/dispatch [:navigate-back])}}]
          (when sticky-header [sticky-header @scroll-height])]]))])
 
+(defn scroll-page-header-for-discover
+  [scroll-height name page-nav content sticky-header]
+  [:f>
+   (fn []
+     (let [input-range         (if platform/ios? [-47 10] [0 150])
+           output-range        (if platform/ios? [-100 0] [-169 -45])
+           y                   (reanimated/use-shared-value @scroll-height)
+           translate-animation (reanimated/interpolate y
+                                                       input-range
+                                                       output-range
+                                                       {:extrapolateLeft  "clamp"
+                                                        :extrapolateRight "clamp"})
+           opacity-animation   (reanimated/use-shared-value 0)
+           threshold           (if platform/ios? 30 170)]
+       (rn/use-effect
+        #(do
+           (reanimated/set-shared-value y @scroll-height)
+           (reanimated/set-shared-value opacity-animation
+                                        (reanimated/with-timing (if (>= @scroll-height threshold) 1 0)
+                                          (clj->js {:duration 100}))))
+        [@scroll-height])
+       [:<>
+        [reanimated/blur-view
+         {:blur-amount   32
+          :blur-type     :xlight
+          :overlay-color (if platform/ios? colors/white-opa-70 :transparent)
+          :style         (style/blur-slider translate-animation)}]
+        [rn/view
+         {:style {:z-index    6
+                  :margin-top (if platform/ios? 44 0)}} 
+         [quo/page-nav
+          {:horizontal-description? true
+           :one-icon-align-left?    true
+           :align-mid?              false
+           :page-nav-color          :transparent
+           :mid-section             {:type            :text-with-description
+                                     :main-text       nil
+                                     :description-img nil}
+           :right-section-buttons   (:right-section-buttons page-nav)
+           :left-section            {:icon                  :i/close
+                                     :icon-background-color (icon-color)
+                                     :on-press              #(rf/dispatch [:navigate-back])}}]
+         (when sticky-header [sticky-header @scroll-height])]]))])
+
 (defn display-picture
   [scroll-height cover]
   [:f>
@@ -130,6 +174,33 @@
                                colors/white
                                colors/neutral-90)}
            [display-picture scroll-height cover]
+           [children]])]])))
+
+(defn scroll-page-for-discover
+  [content page-nav name]
+  (let [scroll-height (reagent/atom negative-scroll-position-0)]
+    (fn [sticky-header children]
+      [:<>
+       [scroll-page-header-for-discover scroll-height name page-nav content sticky-header]
+       [rn/scroll-view
+        {:style                           (style/scroll-view-container
+                                           (diff-with-max-min @scroll-height 16 0))
+         :shows-vertical-scroll-indicator false
+         :scroll-event-throttle           8
+         :on-scroll                       (fn [event]
+                                            (reset! scroll-height (int
+                                                                   (oops/oget
+                                                                    event
+                                                                    "nativeEvent.contentOffset.y"))))} 
+         [rn/view 
+          {:padding-horizontal 20}
+          [content]]
+        (when children
+          [rn/view
+           {:flex             1
+            :background-color (colors/theme-colors
+                               colors/white
+                               colors/neutral-95)}
            [children]])]])))
 
 
