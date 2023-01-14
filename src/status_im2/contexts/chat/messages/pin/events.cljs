@@ -6,6 +6,7 @@
             [status-im2.common.toasts.events :as toasts]
             [status-im2.constants :as constants]
             [status-im.data-store.pin-messages :as data-store.pin-messages]
+            [i18n.i18n :as i18n]
             [status-im.transport.message.protocol :as protocol]
             [utils.re-frame :as rf]
             [taoensso.timbre :as log]))
@@ -59,6 +60,24 @@
                  (assoc-in [:pin-message-lists chat-id]
                            (message-list/add-many nil (vals all-messages))))}))))
 
+(rf/defn delete-pinned-message
+  "Delete pinned message"
+  [{:keys [db] :as cofx} message-id chat-id]
+  (let [message-to-delete (->> (get-in db [:messages chat-id])
+                               (map (fn [current-message]
+                                      (let [message-body (val current-message)]
+                                        (when (and (= (i18n/label :t/pinned-a-message)
+                                                      (get-in message-body [:content :text]))
+                                                   (= message-id
+                                                      (get-in message-body [:content :response-to]))
+                                                   (= constants/content-type-system-text
+                                                      (:content-type message-body)))
+                                          (:message-id message-body)))))
+                               (remove nil?)
+                               first)]
+    (rf/dispatch [:chat.ui/delete-message-and-send {:chat-id chat-id :message-id message-to-delete}
+                  true])))
+
 (rf/defn send-pin-message
   "Pin message, rebuild pinned messages list"
   {:events [:pin-message/send-pin-message]}
@@ -76,15 +95,13 @@
                      (->
                        (update-in [:pin-message-lists chat-id] message-list/remove-message pin-message)
                        (update-in [:pin-messages chat-id] dissoc message-id)))}
-              (data-store.pin-messages/send-pin-message {:chat-id    (pin-message :chat-id)
-                                                         :message_id (pin-message :message-id)
-                                                         :pinned     (pin-message :pinned)})
-              (when pinned
+              (if pinned
                 (protocol/send-chat-messages [{:chat-id      (pin-message :chat-id)
                                                :content-type constants/content-type-system-text
                                                :text         "pinned a message"
                                                :response-to  (pin-message :message-id)
-                                               :ens-name     preferred-name}])))))
+                                               :ens-name     preferred-name}])
+                (delete-pinned-message (pin-message :message-id) chat-id)))))
 
 (rf/defn load-pin-messages
   {:events [:pin-message/load-pin-messages]}
