@@ -19,16 +19,18 @@
     :top      0
     :position :absolute
     :height   (if platform/ios? 100 124)
-    :width    "100%"
+    :right    0
+    :left     0
     :flex     1}))
 
 (defn scroll-view-container
   [border-radius]
   {:position      :absolute
+   :left          0
+   :right         0
    :top           -48
    :overflow      :scroll
-   :border-radius border-radius
-   :height        "100%"})
+   :border-radius border-radius})
 
 (defn sticky-header-title
   [animation]

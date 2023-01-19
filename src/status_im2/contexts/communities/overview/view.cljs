@@ -312,4 +312,3 @@
     [rn/view
      {:style style/community-overview-container}
      [community-card-page-view community]]))
-
