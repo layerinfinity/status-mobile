@@ -43,19 +43,20 @@
 (defn communities-list
   [community-ids]
   [rn/flat-list
-   {:key-fn                            identity
-    :get-item-layout                   get-item-layout-js
-    :keyboard-should-persist-taps      :always
-    :shows-horizontal-scroll-indicator false
-    :data                              community-ids
-    :render-fn                         render-fn}])
+   {:key-fn                          identity
+    :get-item-layout                 get-item-layout-js
+    :keyboard-should-persist-taps    :always
+    :shows-vertical-scroll-indicator false
+    :data                            community-ids
+    :render-fn                       render-fn}])
 
 (defn segments-community-lists
   [selected-tab]
   (let [ids-by-user-involvement (rf/sub [:communities/community-ids-by-user-involvement])
         tab                     @selected-tab]
     [rn/view
-     {:style {:padding-horizontal 20
+     {:style {:flex               1
+              :padding-horizontal 20
               :padding-vertical   12}}
      (case tab
        :joined
