@@ -293,7 +293,11 @@
        {:cover-image                    cover
         :page-nav-right-section-buttons (page-nav-right-section-buttons id)
         :name                           name
-        :on-scroll                      #(reset! scroll-height %)}
+        :on-scroll                      #(reset! scroll-height %)
+        :navigate-back?                 true
+        :backgroun-color                (colors/theme-colors
+                                         colors/white
+                                         colors/neutral-90)}
 
        [sticky-category-header
         {:enabled (> @scroll-height @first-channel-height)

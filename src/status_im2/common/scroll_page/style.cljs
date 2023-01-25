@@ -12,20 +12,21 @@
    :flex    1})
 
 (defn blur-slider
-  [animation]
+  [animation top]
   (reanimated/apply-animations-to-style
    {:transform [{:translateY animation}]}
    {:z-index  5
-    :top      0
+    :top      top
     :position :absolute
-    :height   (if platform/ios? 100 124)
+    :height   (if platform/ios? 164 188)
     :right    0
     :left     0
     :flex     1}))
 
 (defn scroll-view-container
   [border-radius]
-  {:position      :absolute
+  {:flex          1
+   :position      :absolute
    :left          0
    :right         0
    :top           -48
