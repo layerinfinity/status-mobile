@@ -472,7 +472,8 @@
                        (check-audio-permission)
                        (reload-recorder)))
          [rn/view
-          {:style style/bar-container}
+          {:style          style/bar-container
+           :pointer-events :box-none}
           (when @reviewing-audio?
             [:<>
              [play-button playing-audio? player-ref playing-timer audio-current-time-ms seeking-audio?]
@@ -488,6 +489,10 @@
           [rn/view
            {:test-ID                       "record-audio"
             :style                         style/button-container
+            :hit-slop                      {:top    -70
+                                            :bottom 0
+                                            :left   0
+                                            :right  0}
             :pointer-events                :box-only
             :on-start-should-set-responder on-start-should-set-responder
             :on-responder-move             on-responder-move

@@ -44,6 +44,7 @@
    quo2.components.notifications.toast
    quo2.components.profile.profile-card.view
    quo2.components.reactions.reaction
+   quo2.components.record-audio.record-audio.view
    quo2.components.selectors.disclaimer.view
    quo2.components.selectors.filter.view
    quo2.components.selectors.selectors
@@ -57,7 +58,8 @@
    quo2.components.tags.permission-tag
    quo2.components.tags.tag
    quo2.components.tags.tags
-   quo2.components.tags.token-tag))
+   quo2.components.tags.token-tag
+   [quo2.components.record-audio.record-audio.view :as record-audio]))
 
 (def toast quo2.components.notifications.toast/toast)
 (def button quo2.components.buttons.button/button)
@@ -136,6 +138,9 @@
 
 ;;;; PROFILE
 (def profile-card quo2.components.profile.profile-card.view/profile-card)
+
+;;;; RECORD AUDIO
+(def record-audio quo2.components.record-audio.record-audio.view/view)
 
 ;;;; SETTINGS
 (def privacy-option quo2.components.settings.privacy-option/card)

@@ -20,9 +20,10 @@
                        (show-animation)))
                    [@recording? @reviewing-audio?])
        [reanimated/view {:style (style/record-button-container opacity)}
+
         [button/button
          {:type                :outline
           :size                32
           :width               32
           :accessibility-label :mic-button}
-         [icons/icon :i/audio {:color (colors/theme-colors colors/neutral-100 colors/white)}]]]))])
+         [icons/icon :i/audio {:color (colors/theme-colors colors/neutral-50 colors/neutral-40)}]]]))])

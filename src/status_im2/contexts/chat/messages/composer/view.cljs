@@ -172,8 +172,10 @@
   [_ _]
   (let [text-input-ref (rn/create-ref)
         send-ref       (rn/create-ref)
+        record-ref     (rn/create-ref)
         refs           {:send-ref       send-ref
-                        :text-input-ref text-input-ref}]
+                        :text-input-ref text-input-ref
+                        :record-ref     record-ref}]
     (fn [chat-id insets]
       [:f>
        (fn []
@@ -242,7 +244,8 @@
                  :refs                   refs}]]]]
             (if suggestions?
               [mentions params insets]
-              [controls/view send-ref params insets chat-id images #(clean-and-minimize params)])
+              [controls/view send-ref params insets chat-id images #(clean-and-minimize params)
+               record-ref #(println "send audio message")])
             ;;;;black background
             [reanimated/view
              {:style (reanimated/apply-animations-to-style

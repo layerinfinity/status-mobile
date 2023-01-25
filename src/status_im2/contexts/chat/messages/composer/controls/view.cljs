@@ -59,13 +59,31 @@
     :size     32}
    :i/image])
 
+(defn record-button
+  [record-ref {:keys [chat-id]} on-send]
+  [rn/view
+   {:ref   record-ref
+    :style (merge
+            {:height           0
+             :align-items      :center
+             :background-color :transparent
+             :flex-direction   :row
+             :position         :absolute
+             :left             0
+             :right            0}
+            (when (seq (get @input/input-texts chat-id))
+              {:display :none}))}
+   [quo/record-audio {:on-send on-send}]])
+
 (defn view
-  [send-ref params insets chat-id images on-send]
-  [rn/view {:style (style/controls insets)}
-   [composer-images/images-list images]
-   [rn/view {:style {:flex-direction :row :margin-top 12}}
-    [image-button chat-id]
-    [rn/view {:width 12}]
-    [reactions-button]
-    [rn/view {:flex 1}]
-    [send-button send-ref params on-send]]])
+  [send-ref params insets chat-id images on-send record-ref on-audio-send]
+  [:<>
+   [rn/view {:style (style/controls insets)}
+    [composer-images/images-list images]
+    [rn/view {:style {:flex-direction :row :margin-top 12}}
+     [image-button chat-id]
+     [rn/view {:width 12}]
+     [reactions-button]
+     [rn/view {:flex 1}]
+     [send-button send-ref params on-send]]
+    [record-button record-ref params on-audio-send]]])
