@@ -51,7 +51,7 @@
         (reanimated/set-shared-value y scroll-height)
         (reanimated/set-shared-value opacity-animation
                                      (reanimated/with-timing (if (>= scroll-height threshold) 1 0)
-                                       (clj->js {:duration 300}))))
+                                                             (clj->js {:duration 300}))))
      [scroll-height])
     [:<>
      [reanimated/blur-view
@@ -128,9 +128,8 @@
        sticky-header
        children]
       [:<>
-       [:f> scroll-page-header @scroll-height height name
-        page-nav-right-section-buttons cover-image sticky-header top-nav title-colum
-        navigate-back?]
+       [:f> scroll-page-header @scroll-height height name page-nav-right-section-buttons
+        cover-image sticky-header top-nav title-colum navigate-back?]
        [rn/scroll-view
         {:content-container-style         (style/scroll-view-container
                                            (diff-with-max-min @scroll-height 16 0))

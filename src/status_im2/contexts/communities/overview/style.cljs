@@ -11,7 +11,8 @@
   {:position :absolute
    :top      (if platform/ios? 56 60)
    :height   34
-   :width    "100%"
+   :right    0
+   :left     0
    :flex     1})
 
 (def join-button

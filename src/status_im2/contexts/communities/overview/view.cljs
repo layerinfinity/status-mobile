@@ -295,9 +295,10 @@
         :name                           name
         :on-scroll                      #(reset! scroll-height %)
         :navigate-back?                 true
-        :backgroun-color                (colors/theme-colors
+        :background-color               (colors/theme-colors
                                          colors/white
-                                         colors/neutral-90)}
+                                         colors/neutral-90)
+        :height                         (if platform/ios? 100 124)}
 
        [sticky-category-header
         {:enabled (> @scroll-height @first-channel-height)
