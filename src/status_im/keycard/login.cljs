@@ -70,7 +70,7 @@
                                    :status     nil))
       :hide-popover nil})
    (when (:multiaccount db)
-     (navigation/change-tab :profile))
+     (navigation/change-tab :browser-stack)) ;; Profile tab - Currently browser tab is used for profile
    (when-not (:multiaccounts/login db)
      (if (:popover/popover db)
        (navigation/navigate-replace :keycard-pin nil)

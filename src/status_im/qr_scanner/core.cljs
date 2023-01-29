@@ -65,8 +65,8 @@
   (let [own (new-chat.db/own-public-key? db public-key)]
     (cond
       (and public-key own)
-      {:change-tab-fx      :profile
-       :pop-to-root-tab-fx :profile-stack}
+      {:shell/change-tab   :browser-stack ;; Profile tab -  Currently browser tab is used for profile
+       :pop-to-root-tab-fx :shell-stack}
 
       (and public-key (not own))
       (rf/merge cofx
@@ -82,8 +82,8 @@
   [cofx data]
   (rf/merge cofx
             {:dispatch [:wallet/parse-eip681-uri-and-resolve-ens data]}
-            (navigation/change-tab :wallet)
-            (navigation/pop-to-root-tab :wallet-stack)))
+            (navigation/change-tab :wallet-stack)
+            (navigation/pop-to-root-tab :shell-stack)))
 
 (rf/defn handle-wallet-connect
   {:events [::handle-wallet-connect-uri]}
