@@ -176,7 +176,10 @@
            {:padding-vertical    8
             :text-align-vertical :top}
            {:margin-top    8
-            :margin-bottom 8})))
+            :margin-bottom 8})
+         (when @recording-audio?
+           {:position :absolute
+            :top      100})))
 
 (defn text-input
   [{:keys [refs chat-id sending-image on-content-size-change]}]

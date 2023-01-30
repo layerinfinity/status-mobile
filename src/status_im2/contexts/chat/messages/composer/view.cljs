@@ -209,7 +209,9 @@
                                                                      (* 46 (dec (count suggestions)))))
                                                              (+ 0
                                                                 (when (or edit reply) 38)
-                                                                (when (seq images) 80))))
+                                                                (when (seq images) 80)))
+                                                           (when (and @input/recording-audio? reply)
+                                                             -38))
 
                parent-height                            (reanimated/use-shared-value min-y)
                max-parent-height                        (Math/abs (- max-y 110 (:bottom insets)))
@@ -222,7 +224,6 @@
                input-content-change                     (get-input-content-change params)
                bottom-sheet-gesture                     (get-bottom-sheet-gesture params)]
            (effect! params)
-           (rn/use-effect #(if @input/recording-audio? (reanimated/set-shared-value translate-y -34) (reanimated/set-shared-value translate-y 0)) [@input/recording-audio?])
            [reanimated/view
             {:style (reanimated/apply-animations-to-style
                      {:height parent-height}
@@ -245,7 +246,8 @@
                  :refs                   refs}]]]]
             (if suggestions?
               [mentions params insets]
-              [controls/view send-ref params insets chat-id images #(clean-and-minimize params) record-ref])
+              [controls/view send-ref params insets chat-id images #(clean-and-minimize params)
+               record-ref])
             ;;;;black background
             [reanimated/view
              {:style (reanimated/apply-animations-to-style

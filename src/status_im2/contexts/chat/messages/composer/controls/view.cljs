@@ -70,21 +70,22 @@
             :position         :absolute
             :left             0
             :right            0}}
-   [quo/record-audio {:on-start-recording #(reset! input/recording-audio? true)
-                      :on-send            (fn
-                                            [{:keys [file-path duration]}]
-                                            (rf/dispatch [:chat/send-audio file-path duration])
-                                            (reset! input/recording-audio? false))
-                      :on-cancel          #(reset! input/recording-audio? false)}]])
+   [quo/record-audio
+    {:on-start-recording #(reset! input/recording-audio? true)
+     :on-send            (fn
+                           [{:keys [file-path duration]}]
+                           (rf/dispatch [:chat/send-audio file-path duration])
+                           (reset! input/recording-audio? false))
+     :on-cancel          #(reset! input/recording-audio? false)}]])
 
 (defn view
   [send-ref params insets chat-id images on-send record-ref]
-  (println insets "ffdsdfsfsd")
   [rn/view {:style (style/controls insets)}
    [composer-images/images-list images]
-   [rn/view {:style {:flex-direction :row
-                     :margin-top     12
-                     :min-height     32}}
+   [rn/view
+    {:style {:flex-direction :row
+             :margin-top     12
+             :min-height     32}}
     (when-not @input/recording-audio?
       [:<>
        [image-button chat-id]
@@ -93,4 +94,4 @@
        [rn/view {:flex 1}]
        [send-button send-ref params on-send]])]
    (when-not (or (seq (get @input/input-texts chat-id)) (seq images))
-    [record-button record-ref])])
+     [record-button record-ref])])

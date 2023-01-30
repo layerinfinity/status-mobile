@@ -68,35 +68,36 @@
            icon-opacity         (reanimated/use-shared-value 1)
            red-overlay-opacity  (reanimated/use-shared-value 0)
            gray-overlay-opacity (reanimated/use-shared-value 0)
-           complete-animation   (fn []
-                                  (cond
-                                    (and @ready-to-lock? (not @record-button-is-animating?))
-                                    (do
-                                      (reset! locked? true)
-                                      (reset! ready-to-lock? false))
-                                    (and (not @locked?) (not @reviewing-audio?))
-                                    (audio/stop-recording
-                                     @recorder-ref
-                                     (fn []
-                                       (cond
-                                         @ready-to-send?
-                                         (when on-send
-                                           (on-send {:file-path (audio/get-recorder-file-path @recorder-ref)
-                                                     :duration  @recording-length-ms}))
-                                         @ready-to-delete?
-                                         (when on-cancel
-                                           (on-cancel)))
-                                       (reload-recorder-fn)
-                                       (reset! recording? false)
-                                       (reset! ready-to-send? false)
-                                       (reset! ready-to-delete? false)
-                                       (reset! ready-to-lock? false)
-                                       (reset! idle? true)
-                                       (js/setTimeout #(reset! idle? false) 1000)
-                                       (js/clearInterval @recording-timer)
-                                       (reset! recording-length-ms 0)
-                                       (log/debug "[record-audio] stop recording - success"))
-                                     #(log/error "[record-audio] stop recording - error: " %))))
+           complete-animation
+           (fn []
+             (cond
+               (and @ready-to-lock? (not @record-button-is-animating?))
+               (do
+                 (reset! locked? true)
+                 (reset! ready-to-lock? false))
+               (and (not @locked?) (not @reviewing-audio?))
+               (audio/stop-recording
+                @recorder-ref
+                (fn []
+                  (cond
+                    @ready-to-send?
+                    (when on-send
+                      (on-send {:file-path (audio/get-recorder-file-path @recorder-ref)
+                                :duration  @recording-length-ms}))
+                    @ready-to-delete?
+                    (when on-cancel
+                      (on-cancel)))
+                  (reload-recorder-fn)
+                  (reset! recording? false)
+                  (reset! ready-to-send? false)
+                  (reset! ready-to-delete? false)
+                  (reset! ready-to-lock? false)
+                  (reset! idle? true)
+                  (js/setTimeout #(reset! idle? false) 1000)
+                  (js/clearInterval @recording-timer)
+                  (reset! recording-length-ms 0)
+                  (log/debug "[record-audio] stop recording - success"))
+                #(log/error "[record-audio] stop recording - error: " %))))
            start-animation      (fn []
                                   (set-value opacity 1)
                                   (animate-linear scale 2.6 signal-anim-duration)

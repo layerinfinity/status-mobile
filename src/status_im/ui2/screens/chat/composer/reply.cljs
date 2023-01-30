@@ -19,6 +19,12 @@
       (focus-input-on-reply reply had-reply text-input-ref)
       (when reply
         [rn/view
-         {:style {:padding-horizontal 15
-                  :padding-vertical   8}}
+         {:style (merge
+                  {:padding-horizontal 15
+                   :padding-vertical   8}
+                  (when @input/recording-audio?
+                    {:position :absolute
+                     :top      12
+                     :left     0
+                     :right    0}))}
          [reply/reply-message reply true]]))))

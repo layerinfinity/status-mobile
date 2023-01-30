@@ -58,8 +58,7 @@
    quo2.components.tags.permission-tag
    quo2.components.tags.tag
    quo2.components.tags.tags
-   quo2.components.tags.token-tag
-   [quo2.components.record-audio.record-audio.view :as record-audio]))
+   quo2.components.tags.token-tag))
 
 (def toast quo2.components.notifications.toast/toast)
 (def button quo2.components.buttons.button/button)
