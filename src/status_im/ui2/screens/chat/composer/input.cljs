@@ -21,6 +21,7 @@
 (defonce mentions-enabled? (reagent/atom {}))
 (defonce chat-input-key (reagent/atom 1))
 (defonce text-input-ref (reagent/atom nil))
+(defonce recording-audio? (reagent/atom false))
 
 (declare selectable-text-input)
 
@@ -38,18 +39,20 @@
           .focus))
 
 (defn show-send
-  [{:keys [actions-ref send-ref sticker-ref]}]
+  [{:keys [actions-ref send-ref sticker-ref record-ref]}]
   (when actions-ref
     (quo.react/set-native-props actions-ref #js {:width 0 :left -88}))
   (quo.react/set-native-props send-ref #js {:width nil :right nil})
+  (quo.react/set-native-props record-ref #js {:right nil :left -1000})
   (when sticker-ref
     (quo.react/set-native-props sticker-ref #js {:width 0 :right -100})))
 
 (defn hide-send
-  [{:keys [actions-ref send-ref sticker-ref]}]
+  [{:keys [actions-ref send-ref sticker-ref record-ref]}]
   (when actions-ref
     (quo.react/set-native-props actions-ref #js {:width nil :left nil}))
   (quo.react/set-native-props send-ref #js {:width 0 :right -100})
+  (quo.react/set-native-props record-ref #js {:left 0 :right 0})
   (when sticker-ref
     (quo.react/set-native-props sticker-ref #js {:width nil :right nil})))
 

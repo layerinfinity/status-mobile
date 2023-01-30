@@ -20,7 +20,6 @@
                        (show-animation)))
                    [@recording? @reviewing-audio?])
        [reanimated/view {:style (style/record-button-container opacity)}
-
         [button/button
          {:type                :outline
           :size                32

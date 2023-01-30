@@ -222,6 +222,7 @@
                input-content-change                     (get-input-content-change params)
                bottom-sheet-gesture                     (get-bottom-sheet-gesture params)]
            (effect! params)
+           (rn/use-effect #(if @input/recording-audio? (reanimated/set-shared-value translate-y -34) (reanimated/set-shared-value translate-y 0)) [@input/recording-audio?])
            [reanimated/view
             {:style (reanimated/apply-animations-to-style
                      {:height parent-height}
@@ -244,8 +245,7 @@
                  :refs                   refs}]]]]
             (if suggestions?
               [mentions params insets]
-              [controls/view send-ref params insets chat-id images #(clean-and-minimize params)
-               record-ref #(println "send audio message")])
+              [controls/view send-ref params insets chat-id images #(clean-and-minimize params) record-ref])
             ;;;;black background
             [reanimated/view
              {:style (reanimated/apply-animations-to-style

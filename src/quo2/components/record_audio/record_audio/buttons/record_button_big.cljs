@@ -81,7 +81,8 @@
                                        (cond
                                          @ready-to-send?
                                          (when on-send
-                                           (on-send (audio/get-recorder-file-path @recorder-ref)))
+                                           (on-send {:file-path (audio/get-recorder-file-path @recorder-ref)
+                                                     :duration  @recording-length-ms}))
                                          @ready-to-delete?
                                          (when on-cancel
                                            (on-cancel)))
