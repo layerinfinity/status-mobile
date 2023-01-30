@@ -3,7 +3,7 @@
     "_comment": "Instead use: scripts/update-status-go.sh <rev>",
     "owner": "status-im",
     "repo": "status-go",
-    "version": "v0.125.2",
-    "commit-sha1": "fc03393e1b9cc430c6c3357629e47b4aec4f113d",
-    "src-sha256": "1lc1kj0dmqz9ibv2pmvfkyw56hd5k28k84fp47k5s4d5baxcyigi"
+    "version": "fix/yooooutube-link-with-www",
+    "commit-sha1": "6af30874602cb1319c26f9ecdfc71e6862463cc7",
+    "src-sha256": "0n8l2acb2qxwpqkbbcf6ybvp91cfgb71y1vkb2d41n9pn8d844n7"
 }
