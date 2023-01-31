@@ -323,7 +323,7 @@ class TestGroupChatMultipleDeviceMergedNewUI(MultipleSharedDeviceTestCase):
         self.chats[0].send_message(self.message_4)
         self.chats[0].pin_message(self.message_4, 'pin-to-chat')
         if self.chats[0].pin_limit_popover.is_element_displayed(30):
-            self.chats[0].view_pinned_messages_button.click_until_presence_of_element(self.group_chat_1.pinned_messages_list)
+            self.chats[0].view_pinned_messages_button.click_until_presence_of_element(self.chats[0].pinned_messages_list)
             self.chats[0].pinned_messages_list.message_element_by_text(self.message_2).click_inside_element_by_coordinate()
             self.chats[0].element_by_translation_id('unpin-from-chat').double_click()
             self.chats[0].chat_element_by_text(self.message_4).click()
