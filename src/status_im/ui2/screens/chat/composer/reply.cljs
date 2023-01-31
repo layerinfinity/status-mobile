@@ -27,4 +27,4 @@
                      :top      12
                      :left     0
                      :right    0}))}
-         [reply/reply-message reply true]]))))
+         [reply/reply-message reply true false @input/recording-audio?]]))))

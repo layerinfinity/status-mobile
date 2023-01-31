@@ -11,7 +11,8 @@
             [status-im.ui.components.permissions :as permissions]
             [status-im.ui2.screens.chat.composer.images.view :as composer-images]
             [status-im.utils.utils :as utils-old]
-            [status-im.ui2.screens.chat.composer.input :as input]))
+            [status-im.ui2.screens.chat.composer.input :as input]
+            [react-native.platform :as platform]))
 
 (defn send-button
   [send-ref {:keys [chat-id images]} on-send]
@@ -62,14 +63,15 @@
 (defn record-button
   [record-ref]
   [rn/view
-   {:ref   record-ref
-    :style {:height           0
-            :align-items      :center
-            :background-color :transparent
-            :flex-direction   :row
-            :position         :absolute
-            :left             0
-            :right            0}}
+   {:ref            record-ref
+    :style          {:align-items      :center
+                     :background-color :transparent
+                     :flex-direction   :row
+                     :position         :absolute
+                     :left             0
+                     :right            0
+                     :bottom           (if platform/android? -7 27)}
+    :pointer-events :box-none}
    [quo/record-audio
     {:on-start-recording #(reset! input/recording-audio? true)
      :on-send            (fn

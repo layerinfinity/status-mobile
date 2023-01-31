@@ -74,15 +74,17 @@
                                               [old-message/system-contact-request message-data]])))
 
 (defn message-on-long-press
-  [message-data context]
+  [message-data context content-type]
   (rf/dispatch [:dismiss-keyboard])
   (rf/dispatch [:bottom-sheet/show-sheet
-                {:content (drawers/reactions-and-actions message-data context)}]))
+                {:content (drawers/reactions-and-actions message-data context content-type)}]))
 
 (defn user-message-content
   [{:keys [content-type quoted-message content] :as message-data}
    {:keys [chat-id] :as context}]
-  (let [context     (assoc context :on-long-press #(message-on-long-press message-data context))
+  (let [context     (assoc context
+                           :on-long-press
+                           #(message-on-long-press message-data context content-type))
         response-to (:response-to content)]
     [rn/touchable-highlight
      {:underlay-color (colors/theme-colors colors/neutral-5 colors/neutral-90)
@@ -92,7 +94,8 @@
                         (rf/dispatch [:dismiss-keyboard])
                         (rf/dispatch [:bottom-sheet/show-sheet
                                       {:content (drawers/reactions-and-actions message-data
-                                                                               context)}]))}
+                                                                               context
+                                                                               content-type)}]))}
      [rn/view {:padding-vertical 8}
       (when (and (seq response-to) quoted-message)
         [old-message/quoted-message {:message-id response-to :chat-id chat-id} quoted-message])

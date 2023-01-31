@@ -20,9 +20,10 @@
 
 (defn get-actions
   [{:keys [outgoing content pinned] :as message-data}
-   {:keys [edit-enabled show-input? can-delete-message-for-everyone? community? message-pin-enabled]}]
+   {:keys [edit-enabled show-input? can-delete-message-for-everyone? community? message-pin-enabled]}
+   content-type]
   (concat
-   (when (and outgoing edit-enabled)
+   (when (and outgoing edit-enabled (not= content-type constants/content-type-audio))
      [{:type     :main
        :on-press #(rf/dispatch [:chat.ui/edit-message message-data])
        :label    (i18n/label :t/edit-message)
@@ -117,9 +118,9 @@
             icon]])))]))
 
 (defn reactions-and-actions
-  [{:keys [message-id] :as message-data} {:keys [chat-id] :as context}]
+  [{:keys [message-id] :as message-data} {:keys [chat-id] :as context} content-type]
   (fn []
-    (let [actions        (get-actions message-data context)
+    (let [actions        (get-actions message-data context content-type)
           main-actions   (filter #(= (:type %) :main) actions)
           danger-actions (filter #(= (:type %) :danger) actions)
           admin-actions  (filter #(= (:type %) :admin) actions)]

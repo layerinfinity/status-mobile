@@ -65,7 +65,7 @@
 
 (defn reply-message
   [{:keys [from identicon content-type contentType parsed-text content deleted? deleted-for-me?]}
-   in-chat-input? pin?]
+   in-chat-input? pin? recording-audio?]
   (let [contact-name       (rf/sub [:contacts/contact-name-by-identity from])
         current-public-key (rf/sub [:multiaccount/public-key])
         content-type       (or content-type contentType)]
@@ -109,7 +109,7 @@
             constants/content-type-sticker "Sticker"
             constants/content-type-audio   "Audio"
             (get-quoted-text-with-mentions (or parsed-text (:parsed-text content))))]])]
-     (when in-chat-input?
+     (when (and in-chat-input? (not recording-audio?))
        [quo2.button/button
         {:width               24
          :size                24
