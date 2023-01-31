@@ -720,11 +720,7 @@ class TestCommunityMultipleDeviceMerged(MultipleSharedDeviceTestCase):
 
         self.home_1.just_fyi("Check enabling and sending first gif")
         self.channel_2.send_message(giphy_url)
-        # workaround to get chat view focused
-        self.channel_2.send_message(giphy_url)
         self.channel_2.element_by_translation_id("dont-ask").click()
-        # workaround to get chat view focused
-        self.channel_1.send_message(giphy_url)
         self.channel_1.element_by_text("Enable").wait_and_click()
 
         self.channel_1.element_by_translation_id("enable-all").wait_and_click()
