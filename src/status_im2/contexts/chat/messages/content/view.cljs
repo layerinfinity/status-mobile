@@ -91,7 +91,7 @@
       :style          {:border-radius 16
                        :opacity       (if (or (not outgoing) (= outgoing-status :sent)) 1 0.5)}
       :on-press       (fn []
-                        (when (and (not (= outgoing-status :sending)) (not @show-delivery-state?))
+                        (when (and outgoing (not (= outgoing-status :sending)) (not @show-delivery-state?))
                           (reset! show-delivery-state? true)
                           (js/setTimeout #(reset! show-delivery-state? false) 3000)))
       :on-long-press  (fn []
