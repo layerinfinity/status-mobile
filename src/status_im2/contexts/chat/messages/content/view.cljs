@@ -17,7 +17,8 @@
             [utils.re-frame :as rf]
             [status-im.ui2.screens.chat.messages.message :as old-message]
             [status-im2.common.not-implemented :as not-implemented]
-            [utils.datetime :as datetime]))
+            [utils.datetime :as datetime]
+            [reagent.core :as reagent]))
 
 (defn avatar
   [{:keys [content last-in-group? pinned quoted-message from]}]
@@ -80,20 +81,26 @@
                 {:content (drawers/reactions-and-actions message-data context)}]))
 
 (defn user-message-content
-  [{:keys [content-type quoted-message content] :as message-data}
-   {:keys [chat-id] :as context}]
+  [{:keys [content-type quoted-message content outgoing outgoing-status] :as message-data}
+   {:keys [chat-id] :as context}
+   show-delivery-state?]
   (let [context     (assoc context :on-long-press #(message-on-long-press message-data context))
         response-to (:response-to content)]
     [rn/touchable-highlight
      {:underlay-color (colors/theme-colors colors/neutral-5 colors/neutral-90)
-      :style          {:border-radius 16}
-      :on-press       #()
+      :style          {:border-radius 16
+                       :opacity       (if (or (not outgoing) (= outgoing-status :sent)) 1 0.5)}
+      :on-press       (fn []
+                        (when (and (not (= outgoing-status :sending)) (not @show-delivery-state?))
+                          (reset! show-delivery-state? true)
+                          (js/setTimeout #(reset! show-delivery-state? false) 3000)))
       :on-long-press  (fn []
                         (rf/dispatch [:dismiss-keyboard])
                         (rf/dispatch [:bottom-sheet/show-sheet
                                       {:content (drawers/reactions-and-actions message-data
                                                                                context)}]))}
-     [rn/view {:padding-vertical 8}
+     [rn/view
+      {:padding-vertical 8}
       (when (and (seq response-to) quoted-message)
         [old-message/quoted-message {:message-id response-to :chat-id chat-id} quoted-message])
       [rn/view {:padding-horizontal 12 :flex-direction :row}
@@ -119,21 +126,23 @@
           constants/content-type-album   [album/album-message message-data context]
 
           [not-implemented/not-implemented [content.unknown/unknown-content message-data]])
-        [status/status message-data]]]]]))
+        (when @show-delivery-state?
+          [status/status outgoing-status])]]]]))
 
 (defn message-with-reactions
   [{:keys [pinned pinned-by mentioned in-pinned-view? content-type
            last-in-group? message-id]
     :as   message-data}
    {:keys [chat-id] :as context}]
-  [rn/view
-   {:style               (style/message-container in-pinned-view? pinned mentioned last-in-group?)
-    :accessibility-label :chat-item}
-   (when pinned
-     [pin/pinned-by-view pinned-by])
-   (if (#{constants/content-type-system-text constants/content-type-community
-          constants/content-type-contact-request}
-        content-type)
-     [system-message-content message-data]
-     [user-message-content message-data context])
-   [reactions/message-reactions-row chat-id message-id]])
+  (let [show-delivery-state? (reagent/atom false)]
+    [rn/view
+     {:style               (style/message-container in-pinned-view? pinned mentioned last-in-group?)
+      :accessibility-label :chat-item}
+     (when pinned
+       [pin/pinned-by-view pinned-by])
+     (if (#{constants/content-type-system-text constants/content-type-community
+            constants/content-type-contact-request}
+          content-type)
+       [system-message-content message-data]
+       [user-message-content message-data context show-delivery-state?])
+     [reactions/message-reactions-row chat-id message-id]]))

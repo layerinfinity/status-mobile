@@ -123,17 +123,6 @@
           [:<>]
           (:parsed-text content)))
 
-(defn message-status
-  [{:keys [outgoing-status edited-at]}]
-  (when (or edited-at outgoing-status)
-    [rn/view {:flex-direction :row}
-     [rn/text {:style (style/message-status-text)}
-      (str "["
-           (if edited-at
-             "edited"
-             (or outgoing-status ""))
-           " DEBUG]")]]))
-
 (defn quoted-message
   [{:keys [message-id chat-id]} reply pin?]
   (let [{:keys [deleted? deleted-for-me?]} (get @(re-frame/subscribe [:chats/chat-messages chat-id])
