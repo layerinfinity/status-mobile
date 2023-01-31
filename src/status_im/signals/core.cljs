@@ -9,7 +9,9 @@
             [status-im.visibility-status-updates.core :as visibility-status-updates]
             [utils.re-frame :as rf]
             [status-im2.contexts.chat.messages.link-preview.events :as link-preview]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [status-im2.navigation.core :as navigation]
+            [status-im2.constants :as constants]))
 
 (rf/defn status-node-started
   [{db :db :as cofx} {:keys [error]}]
@@ -54,9 +56,12 @@
                 :peers-count (count (:peers peer-stats)))}))
 
 (defn handle-local-pairing-signals
-  [signal-type]
-  (log/info "local pairing signal received"
-            {:signal-type signal-type}))
+  [{:keys [type action] :as event}]
+  (log/debug "local pairing signal received"
+             {:event event})
+  (when (and (= constants/local-pair-event-process-success type)
+             (= constants/local-pair-action-sync-device action))
+    (navigation/dismiss-all-modals)))
 
 (rf/defn process
   {:events [:signals/signal-received]}
@@ -110,5 +115,5 @@
       "status.updates.timedout" (visibility-status-updates/handle-visibility-status-updates
                                  cofx
                                  (js->clj event-js :keywordize-keys true))
-      "localPairing"            (handle-local-pairing-signals event-str)
+      "localPairing"            (handle-local-pairing-signals (js->clj event-js :keywordize-keys true))
       (log/debug "Event " type " not handled"))))
