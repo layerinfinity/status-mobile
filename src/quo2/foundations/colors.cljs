@@ -60,6 +60,7 @@
 
 ;;Blur
 (def neutral-5-opa-70 (alpha neutral-5 0.7))
+(def neutral-90-opa-0 (alpha neutral-90 0))
 (def neutral-90-opa-70 (alpha neutral-90 0.7))
 
 ;;80 with transparency
@@ -102,6 +103,7 @@
 (def white "#ffffff")
 
 ;; with transparency
+(def white-opa-0 (alpha white 0))
 (def white-opa-5 (alpha white 0.05))
 (def white-opa-10 (alpha white 0.1))
 (def white-opa-20 (alpha white 0.2))

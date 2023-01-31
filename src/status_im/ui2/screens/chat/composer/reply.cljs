@@ -27,4 +27,5 @@
                      :top      12
                      :left     0
                      :right    0}))}
-         [reply/reply-message reply true false @input/recording-audio?]]))))
+         [reply/reply-message reply true false
+          (and @input/recording-audio? (not @input/reviewing-audio?))]]))))

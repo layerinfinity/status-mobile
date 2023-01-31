@@ -22,6 +22,7 @@
 (defonce chat-input-key (reagent/atom 1))
 (defonce text-input-ref (reagent/atom nil))
 (defonce recording-audio? (reagent/atom false))
+(defonce reviewing-audio? (reagent/atom false))
 
 (declare selectable-text-input)
 

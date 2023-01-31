@@ -11,7 +11,8 @@
             [status-im.ui.components.icons.icons :as icons]
             [status-im.ui.screens.chat.photos :as photos]
             [utils.re-frame :as rf]
-            [status-im.ui2.screens.chat.components.reply.style :as style]))
+            [status-im.ui2.screens.chat.components.reply.style :as style]
+            [react-native.linear-gradient :as linear-gradient]))
 
 (defn get-quoted-text-with-mentions
   [parsed-text]
@@ -80,9 +81,9 @@
          {:color           (colors/theme-colors colors/neutral-40 colors/neutral-60)
           :container-style {:position :absolute :left 10 :bottom -4 :width 16 :height 16}}])
       (if (or deleted? deleted-for-me?)
-        [rn/view {:style (style/quoted-message pin?)}
+        [rn/view {:style (style/quoted-message pin? in-chat-input?)}
          [reply-deleted-message]]
-        [rn/view {:style (style/quoted-message pin?)}
+        [rn/view {:style (style/quoted-message pin? in-chat-input?)}
          [photos/member-photo from identicon 16]
          [quo2.text/text
           {:weight          :semi-bold
@@ -120,4 +121,11 @@
         [icons/icon :main-icons/close
          {:width  16
           :height 16
-          :color  (colors/theme-colors colors/neutral-100 colors/neutral-40)}]])]))
+          :color  (colors/theme-colors colors/neutral-100 colors/neutral-40)}]])
+     (when (and in-chat-input? recording-audio?)
+       [linear-gradient/linear-gradient
+        {:colors [(colors/theme-colors colors/white-opa-0 colors/neutral-90-opa-0)
+                  (colors/theme-colors colors/white colors/neutral-90)]
+         :start  {:x 0 :y 0}
+         :end    {:x 0.7 :y 0}
+         :style  style/gradient}])]))

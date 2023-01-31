@@ -74,11 +74,15 @@
     :pointer-events :box-none}
    [quo/record-audio
     {:on-start-recording #(reset! input/recording-audio? true)
+     :on-reviewing-audio #(reset! input/reviewing-audio? true)
      :on-send            (fn
                            [{:keys [file-path duration]}]
                            (rf/dispatch [:chat/send-audio file-path duration])
-                           (reset! input/recording-audio? false))
-     :on-cancel          #(reset! input/recording-audio? false)}]])
+                           (reset! input/recording-audio? false)
+                           (reset! input/reviewing-audio? false))
+     :on-cancel          (fn []
+                           (reset! input/recording-audio? false)
+                           (reset! input/reviewing-audio? false))}]])
 
 (defn view
   [send-ref params insets chat-id images on-send record-ref]
