@@ -270,7 +270,7 @@ class TestGroupChatMultipleDeviceMergedNewUI(MultipleSharedDeviceTestCase):
         self.homes[0].just_fyi("check that messages are shown for every member")
         for i in range(3):
             for message in (message_1, message_2):
-                if not self.chats[i].chat_element_by_text(message).is_element_displayed():
+                if not self.chats[i].chat_element_by_text(message).is_element_displayed(30):
                     self.errors.append('%s if not shown for device %s' % (message, str(i)))
         self.errors.verify_no_errors()
 
