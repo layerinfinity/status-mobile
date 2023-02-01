@@ -27,7 +27,7 @@
                                                        :all
                                                        :unread)}])}]))
 
-(defn render-more
+(defn options-bottom-sheet-content
   []
   (let [unread-count (rf/sub [:activity-center/unread-count])]
     [quo/action-drawer
@@ -135,7 +135,7 @@
       :accessibility-label :activity-center-open-more
       :override-theme      :dark
       :on-press            #(rf/dispatch [:bottom-sheet/show-sheet
-                                          {:content        render-more
+                                          {:content        options-bottom-sheet-content
                                            :override-theme :dark}])}
      :i/options]]
    [quo/text

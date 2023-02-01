@@ -164,9 +164,6 @@
           []
           notifications))
 
-
-;;;; Mark all notifications as read
-
 (rf/defn mark-all-as-read
   {:events [:activity-center.notifications/mark-all-as-read]}
   [{:keys [db] :as cofx}]
@@ -175,12 +172,17 @@
       {:db            (update-in db [:activity-center] dissoc :mark-all-as-read-undoable-till)
        :json-rpc/call [{:method     "wakuext_markAllActivityCenterNotificationsRead"
                         :params     []
-                        :on-success #()
+                        :on-success #(rf/dispatch
+                                      [:activity-center.notifications/mark-all-as-read-success])
                         :on-error   #(rf/dispatch [:activity-center/process-notification-failure
                                                    nil
                                                    :notification/mark-all-as-read
                                                    %])}]})))
 
+(rf/defn mark-all-as-read-success
+  {:events [:activity-center.notifications/mark-all-as-read-success]}
+  [{:keys [db]}]
+  {:db (update-in db [:activity-center] dissoc :mark-all-as-read-undoable-till)})
 
 (rf/defn undo-mark-all-as-read
   {:events [:activity-center.notifications/undo-mark-all-as-read-locally]}
