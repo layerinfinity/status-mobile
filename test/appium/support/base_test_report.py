@@ -7,6 +7,7 @@ from sauceclient import SauceException
 import re
 
 from support.test_data import SingleTestData
+from tests.conftest import sauce, apibase
 
 class BaseTestReport:
     TEST_REPORT_DIR = "%s/../report" % os.path.dirname(os.path.abspath(__file__))
