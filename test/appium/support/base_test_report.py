@@ -115,9 +115,10 @@ class BaseTestReport:
     def get_sauce_final_screenshot_url(self, job_id):
         from tests.conftest import sauce, apibase
         token = self.get_sauce_token(job_id)
+        username = sauce.accounts.account_user.get_active_user().username
         for _ in range(10):
             try:
-                scr_number = sauce.jobs.get_job_assets(job_id)['screenshots'][-1]
+                scr_number = sauce.jobs.get_job_assets(username=username, job_id=job_id)['screenshots'][-1]
                 return 'https://assets.%s/jobs/%s/%s?auth=%s' % (apibase, job_id, scr_number, token)
             except SauceException:
                 time.sleep(3)

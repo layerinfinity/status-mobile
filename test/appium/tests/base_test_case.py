@@ -394,7 +394,8 @@ class SauceSharedMultipleDeviceTestCase(AbstractTestCase):
             if option.datacenter == 'eu-central-1':
                 url = 'https://eu-central-1.saucelabs.com/rest/v1/%s/jobs/%s/assets/%s' % (sauce_username, session_id, "log.json")
             else:
-                url = sauce.jobs.get_job_asset_url(job_id=session_id, filename="log.json")
+                username = sauce.accounts.account_user.get_active_user().username
+                url = sauce.jobs.get_job_asset_url(username=username, job_id=session_id, filename="log.json")
             WebDriverWait(driver, 60, 2).until(lambda _: requests_session.get(url).status_code == 200)
             commands = requests_session.get(url).json()
             for command in commands:
