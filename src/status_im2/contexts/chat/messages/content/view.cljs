@@ -122,14 +122,14 @@
         [status/status message-data]]]]]))
 
 (defn message-with-reactions
-  [{:keys [pinned pinned-by mentioned in-pinned-view? content-type
+  [{:keys [pinned-by mentioned in-pinned-view? content-type
            last-in-group? message-id]
     :as   message-data}
    {:keys [chat-id] :as context}]
   [rn/view
-   {:style               (style/message-container in-pinned-view? pinned mentioned last-in-group?)
+   {:style               (style/message-container in-pinned-view? pinned-by mentioned last-in-group?)
     :accessibility-label :chat-item}
-   (when pinned
+   (when pinned-by
      [pin/pinned-by-view pinned-by])
    (if (#{constants/content-type-system-text constants/content-type-community
           constants/content-type-contact-request}
