@@ -345,7 +345,7 @@ class TestGroupChatMultipleDeviceMergedNewUI(MultipleSharedDeviceTestCase):
                 pinned_by = group_chat.pinned_messages_list.get_message_pinned_by_text(message)
                 if pinned_by.is_element_displayed():
                     text = pinned_by.text.strip()
-                    expected_text = "You" if chat_number == 0 else self.usernames[1]
+                    expected_text = "You" if chat_number == 0 else self.usernames[0]
                     if text != expected_text:
                         self.errors.append(
                             "Pinned by '%s' doesn't match expected '%s' for user %s" % (
