@@ -77,7 +77,14 @@
       (when-not hide-search
         [base-button :i/search #() :open-search-button button-common-props])
       [base-button :i/scan #() :open-scanner-button button-common-props]
-      [base-button :i/qr-code #() :show-qr-button button-common-props]
+      ;; navigate to share shell screen
+      [base-button :i/qr-code #(rf/dispatch [:show-popover
+                                             {:view                       :profile-share
+                                              :style                      {:margin 0}
+                                              :disable-touchable-overlay? true
+                                              :blur-view?                 true
+                                              :blur-view-props            {:blur-amount 20
+                                                                           :blur-type   :dark}}]) :show-qr-button button-common-props]
       [rn/view                     ;; Keep view instead of "[:<>" to make sure relative
        ;; position is calculated from this view instead of its parent
        [hole-view/hole-view
