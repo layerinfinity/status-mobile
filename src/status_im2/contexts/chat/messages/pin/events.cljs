@@ -6,7 +6,6 @@
             [status-im2.common.toasts.events :as toasts]
             [status-im2.constants :as constants]
             [status-im.data-store.pin-messages :as data-store.pin-messages]
-            [i18n.i18n :as i18n]
             [status-im.transport.message.protocol :as protocol]
             [utils.re-frame :as rf]
             [taoensso.timbre :as log]))
