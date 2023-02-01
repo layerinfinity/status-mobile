@@ -383,8 +383,7 @@ class SauceSharedMultipleDeviceTestCase(AbstractTestCase):
         for _, driver in cls.drivers.items():
             session_id = driver.session_id
             try:
-                username = sauce.accounts.account_user.get_active_user().username
-                sauce.jobs.update_job(username=username, job_id=session_id, name=cls.__name__)
+                sauce.jobs.update_job(username=sauce_username, job_id=session_id, name=cls.__name__)
             except (RemoteDisconnected, SauceException):
                 pass
             try:
@@ -394,8 +393,7 @@ class SauceSharedMultipleDeviceTestCase(AbstractTestCase):
             if option.datacenter == 'eu-central-1':
                 url = 'https://eu-central-1.saucelabs.com/rest/v1/%s/jobs/%s/assets/%s' % (sauce_username, session_id, "log.json")
             else:
-                username = sauce.accounts.account_user.get_active_user().username
-                url = sauce.jobs.get_job_asset_url(username=username, job_id=session_id, filename="log.json")
+                url = sauce.jobs.get_job_asset_url(username=sauce_username, job_id=session_id, filename="log.json")
             WebDriverWait(driver, 60, 2).until(lambda _: requests_session.get(url).status_code == 200)
             commands = requests_session.get(url).json()
             for command in commands:

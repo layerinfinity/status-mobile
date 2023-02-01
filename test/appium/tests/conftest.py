@@ -330,10 +330,9 @@ def pytest_runtest_makereport(item, call):
 
 def update_sauce_jobs(test_name, job_ids, passed):
     from sauceclient import SauceException
-    username = sauce.accounts.account_user.get_active_user().username
     for job_id in job_ids.keys():
         try:
-            sauce.jobs.update_job(username=username, job_id=job_id, name=test_name, passed=passed)
+            sauce.jobs.update_job(username=sauce_username, job_id=job_id, name=test_name, passed=passed)
         except (RemoteDisconnected, SauceException):
             pass
 
