@@ -113,15 +113,17 @@ class BaseTestReport:
                '?BRANCH_NAME=%s&APK_NAME=%s&PR_ID=%s&TR_CASE_IDS=%s' % (branch_name, apk_name, pr_id, tr_case_ids)
 
     def get_sauce_final_screenshot_url(self, job_id):
-        from tests.conftest import sauce, apibase
-        token = self.get_sauce_token(job_id)
-        username = sauce.accounts.account_user.get_active_user().username
-        for _ in range(10):
-            try:
-                scr_number = sauce.jobs.get_job_assets(username=username, job_id=job_id)['screenshots'][-1]
-                return 'https://assets.%s/jobs/%s/%s?auth=%s' % (apibase, job_id, scr_number, token)
-            except SauceException:
-                time.sleep(3)
+        return 'https://media.giphy.com/media/9M5jK4GXmD5o1irGrF/giphy.gif'
+        # temp blocked, no sense with groups
+        # from tests.conftest import sauce, apibase
+        # token = self.get_sauce_token(job_id)
+        # username = sauce.accounts.account_user.get_active_user().username
+        # for _ in range(10):
+        #     try:
+        #         scr_number = sauce.jobs.get_job_assets(username=username, job_id=job_id)['screenshots'][-1]
+        #         return 'https://assets.%s/jobs/%s/%s?auth=%s' % (apibase, job_id, scr_number, token)
+        #     except SauceException:
+        #         time.sleep(3)
 
     @staticmethod
     def is_test_successful(test):
