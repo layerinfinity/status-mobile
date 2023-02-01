@@ -1320,6 +1320,7 @@ class TestOneToOneChatMultipleSharedDevicesNewUi(MultipleSharedDeviceTestCase):
 
         self.home_1.just_fyi('Turn on airplane mode and check that offline status is shown on home view')
         [home.toggle_airplane_mode() for home in (self.home_1, self.home_2)]
+######
         # Not implemented yet
         # self.home_1.connection_offline_icon.wait_and_click(20)
         # for element in self.home_1.not_connected_to_node_text, self.home_1.not_connected_to_peers_text:
@@ -1327,7 +1328,7 @@ class TestOneToOneChatMultipleSharedDevicesNewUi(MultipleSharedDeviceTestCase):
         #         self.errors.append(
         #             'Element "%s" is not shown in Connection status screen if device is offline' % element.locator)
         # self.home_1.click_system_back_button()
-
+#####
         message_1 = 'test message'
 
         self.home_2.just_fyi('Device2 checks "Sending" status when sending message from offline')

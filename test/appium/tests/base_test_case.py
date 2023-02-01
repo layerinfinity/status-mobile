@@ -1,12 +1,10 @@
 import asyncio
 import base64
 import logging
-import re
 import subprocess
 import sys
 from abc import ABCMeta, abstractmethod
 from http.client import RemoteDisconnected
-from os import environ
 from re import findall
 
 import pytest
@@ -18,23 +16,18 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 
-from tests.conftest import option
+from tests.conftest import option, apibase, sauce_username, sauce_access_key, sauce
 from support.api.network_api import NetworkApi
 from support.github_report import GithubHtmlReport
 from tests import test_suite_data, start_threads, appium_container, pytest_config_global
 from tests import transl
-from tests.cloudbase_test_api import sauce, apibase
 
-sauce_username = environ.get('SAUCE_USERNAME')
-
-sauce_access_key = environ.get('SAUCE_ACCESS_KEY')
 
 executor_sauce_lab = 'https://%s:%s@ondemand.%s:443/wd/hub' % (sauce_username, sauce_access_key, apibase)
 
 executor_local = 'http://localhost:4723/wd/hub'
 
 implicit_wait = 5
-
 
 def get_capabilities_local():
     desired_caps = dict()
@@ -390,7 +383,8 @@ class SauceSharedMultipleDeviceTestCase(AbstractTestCase):
         for _, driver in cls.drivers.items():
             session_id = driver.session_id
             try:
-                sauce.jobs.update_job(job_id=session_id, name=cls.__name__)
+                username = sauce.accounts.account_user.get_active_user().username
+                sauce.jobs.update_job(username=username, job_id=session_id, name=cls.__name__)
             except (RemoteDisconnected, SauceException):
                 pass
             try:
