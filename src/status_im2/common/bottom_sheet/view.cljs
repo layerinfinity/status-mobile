@@ -70,14 +70,14 @@
                (reset! expanded? false))))))))
 
 (defn handle-comp
-  [window-width]
+  [window-width override-theme]
   [rn/view
    {:style {:width            window-width
             :position         :absolute
             :background-color :transparent
             :top              0
             :height           20}}
-   [rn/view {:style (styles/handle)}]])
+   [rn/view {:style (styles/handle override-theme)}]])
 
 (defn bottom-sheet
   [props children]
@@ -89,6 +89,7 @@
          expandable?           :expandable?
          selected-item         :selected-item
          is-initially-expaned? :expanded?
+         override-theme        :override-theme
          :or                   {show-handle?          true
                                 backdrop-dismiss?     true
                                 expandable?           false
@@ -152,7 +153,7 @@
                                       close-bottom-sheet
                                       gesture-running?)
                 handle-comp [gesture/gesture-detector {:gesture bottom-sheet-gesture}
-                             [handle-comp window-width]]]
+                             [handle-comp window-width override-theme]]]
 
             (react/effect! #(do
                               (cond
@@ -219,9 +220,9 @@
                                  :height window-height})}
                        [rn/view {:style styles/container}
                         (when selected-item
-                          [rn/view {:style (styles/selected-background)}
+                          [rn/view {:style (styles/selected-background override-theme)}
                            [selected-item]])
-                        [rn/view {:style (styles/background)}
+                        [rn/view {:style (styles/background override-theme)}
                          [rn/keyboard-avoiding-view
                           {:behaviour (if platform/ios? :padding :height)
                            :style     {:flex 1}}

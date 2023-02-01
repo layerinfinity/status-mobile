@@ -1,6 +1,5 @@
 (ns status-im2.contexts.activity-center.view
-  (:require [utils.i18n :as i18n]
-            [quo.react :as react]
+  (:require [quo.react :as react]
             [quo2.core :as quo]
             [react-native.core :as rn]
             [react-native.safe-area :as safe-area]
@@ -13,6 +12,7 @@
             [status-im2.contexts.activity-center.notification.mentions.view :as mentions]
             [status-im2.contexts.activity-center.notification.reply.view :as reply]
             [status-im2.contexts.activity-center.style :as style]
+            [utils.i18n :as i18n]
             [utils.re-frame :as rf]))
 
 (defn filter-selector-read-toggle
@@ -26,6 +26,22 @@
                                      {:filter-status (if unread-filter-enabled?
                                                        :all
                                                        :unread)}])}]))
+
+(defn render-more
+  []
+  (let [unread-count (rf/sub [:activity-center/unread-count])]
+    [quo/action-drawer
+     [[(when (pos? unread-count)
+         {:icon           :i/check
+          :override-theme :dark
+          :label          (i18n/label :t/mark-all-notifications-as-read)
+          :on-press       #(do
+                             (rf/dispatch [:bottom-sheet/hide])
+                             (rf/dispatch [:activity-center.notifications/mark-all-as-read-locally]))})
+       {:icon           :i/settings
+        :override-theme :dark
+        :label          (i18n/label :t/chat-notification-preferences)
+        :on-press       #(js/alert "Yet to be implemented")}]]]))
 
 (defn empty-tab
   []
@@ -103,15 +119,25 @@
 (defn header
   []
   [rn/view
-   [quo/button
-    {:icon                true
-     :type                :blur-bg
-     :size                32
-     :accessibility-label :close-activity-center
-     :override-theme      :dark
-     :style               style/header-button
-     :on-press            #(rf/dispatch [:hide-popover])}
-    :i/close]
+   [rn/view {:style style/header-container}
+    [quo/button
+     {:icon                true
+      :type                :blur-bg
+      :size                32
+      :accessibility-label :close-activity-center
+      :override-theme      :dark
+      :on-press            #(rf/dispatch [:hide-popover])}
+     :i/close]
+    [quo/button
+     {:icon                true
+      :type                :blur-bg
+      :size                32
+      :accessibility-label :activity-center-open-more
+      :override-theme      :dark
+      :on-press            #(rf/dispatch [:bottom-sheet/show-sheet
+                                          {:content        render-more
+                                           :override-theme :dark}])}
+     :i/options]]
    [quo/text
     {:size   :heading-1
      :weight :semi-bold

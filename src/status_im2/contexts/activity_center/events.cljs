@@ -1,10 +1,14 @@
 (ns status-im2.contexts.activity-center.events
-  (:require [status-im.data-store.activities :as data-store.activities]
+  (:require [quo2.foundations.colors :as colors]
+            [status-im.data-store.activities :as data-store.activities]
             [status-im.data-store.chats :as data-store.chats]
             [status-im2.contexts.activity-center.notification-types :as types]
             [status-im2.contexts.chat.events :as chat.events]
             [taoensso.timbre :as log]
-            [utils.re-frame :as rf]))
+            [utils.i18n :as i18n]
+            [utils.re-frame :as rf]
+            [status-im2.constants :as constants]
+            [utils.datetime :as datetime]))
 
 (def defaults
   {:filter-status          :unread
@@ -152,6 +156,74 @@
   {:events [:activity-center.notifications/mark-as-read-success]}
   [cofx notification]
   (notifications-reconcile cofx [(assoc notification :read true)]))
+
+(defn- update-read-flag
+  [notifications read?]
+  (reduce (fn [acc notification]
+            (conj acc (assoc notification :read read?)))
+          []
+          notifications))
+
+
+;;;; Mark all notifications as read
+
+(rf/defn mark-all-as-read
+  {:events [:activity-center.notifications/mark-all-as-read]}
+  [{:keys [db] :as cofx}]
+  (when-let [undoable-till (get-in db [:activity-center :mark-all-as-read-undoable-till])]
+    (when (>= (datetime/timestamp) undoable-till)
+      {:db            (update-in db [:activity-center] dissoc :mark-all-as-read-undoable-till)
+       :json-rpc/call [{:method     "wakuext_markAllActivityCenterNotificationsRead"
+                        :params     []
+                        :on-success #()
+                        :on-error   #(rf/dispatch [:activity-center/process-notification-failure
+                                                   nil
+                                                   :notification/mark-all-as-read
+                                                   %])}]})))
+
+
+(rf/defn undo-mark-all-as-read
+  {:events [:activity-center.notifications/undo-mark-all-as-read-locally]}
+  [{:keys [db] :as cofx} {:keys [unread-count notifications]}]
+  {:db (-> db
+           (update-in [:activity-center :notifications]
+                      update-notifications
+                      notifications)
+           (assoc-in [:activity-center :unread-count] unread-count)
+           (update-in [:activity-center] dissoc :mark-all-as-read-undoable-till))})
+
+(rf/defn mark-all-as-read-locally
+  {:events [:activity-center.notifications/mark-all-as-read-locally]}
+  [{:keys [db] :as cofx}]
+  (let [unread-count         (get-in db [:activity-center :unread-count])
+        unread-notifications (get-in db [:activity-center :notifications types/no-type :unread :data])
+        undo-time-limit-ms   constants/activity-center-mark-all-as-read-undo-time-limit-ms
+        undoable-till        (+ (datetime/timestamp) undo-time-limit-ms)]
+    {:db                   (-> db
+                               (update-in [:activity-center :notifications]
+                                          update-notifications
+                                          (update-read-flag unread-notifications true))
+                               (assoc-in [:activity-center :unread-count] 0)
+                               (assoc-in [:activity-center :mark-all-as-read-undoable-till]
+                                         undoable-till))
+     :dispatch             [:toasts/upsert
+                            {:id             :activity-center-mark-all-as-read
+                             :icon           :up-to-date
+                             :icon-color     colors/success-50
+                             :text           (i18n/label :t/notifications-marked-as-read
+                                                         {:count unread-count})
+                             :override-theme :dark
+                             :duration       undo-time-limit-ms
+                             :undo-duration  (/ undo-time-limit-ms 1000)
+                             :undo-on-press
+                             #(do
+                                (rf/dispatch
+                                 [:activity-center.notifications/undo-mark-all-as-read-locally
+                                  {:unread-count  unread-count
+                                   :notifications unread-notifications}])
+                                (rf/dispatch [:toasts/close :activity-center-mark-all-as-read]))}]
+     :utils/dispatch-later [{:dispatch [:activity-center.notifications/mark-all-as-read]
+                             :ms       undo-time-limit-ms}]}))
 
 ;;;; Acceptance/dismissal
 
