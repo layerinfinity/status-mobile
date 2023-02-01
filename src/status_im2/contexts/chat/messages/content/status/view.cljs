@@ -3,8 +3,6 @@
             [quo2.foundations.colors :as colors]
             [utils.i18n :as i18n]
             [status-im2.contexts.chat.messages.content.status.style :as style]
-            [status-im2.contexts.chat.messages.delete-message-for-me.events]
-            [status-im2.contexts.chat.messages.delete-message.events]
             [quo2.core :as quo]))
 
 (defn status
