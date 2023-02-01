@@ -334,7 +334,7 @@ class TestGroupChatMultipleDeviceMergedNewUI(MultipleSharedDeviceTestCase):
         else:
             self.errors.append("Can pin more than 3 messages in group chat")
 
-        self.home_1.just_fyi("Check pinned messages count and content")
+        self.chats[0].just_fyi("Check pinned messages count and content")
         for chat_number, group_chat in enumerate([self.chats[0], self.chats[1]]):
             count = group_chat.pinned_messages_count.text
             if count != '3':

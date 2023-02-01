@@ -101,6 +101,7 @@ class BaseTestReport:
 
     def get_sauce_job_url(self, job_id, first_command=0):
         token = self.get_sauce_token(job_id)
+        from tests.conftest import apibase
         url = 'https://%s/jobs/%s?auth=%s' % (apibase, job_id, token)
         if first_command > 0:
             url += "#%s" % first_command
