@@ -77,16 +77,16 @@
 (defn toast
   [{:keys [icon icon-color text action undo-duration undo-on-press container-style override-theme]}]
   [toast-container
-   {:left           (when icon
-                      [icon/icon icon
-                       {:container-style {:width 20 :height 20}
-                        :color           (or icon-color
-                                             (get-in themes
-                                                     [:icon (or override-theme (theme/get-theme))
-                                                      :color]))}])
-    :middle         text
-    :right          (if undo-duration
-                      [toast-undo-action undo-duration undo-on-press override-theme]
-                      action)
+   {:left            (when icon
+                       [icon/icon icon
+                        {:container-style {:width 20 :height 20}
+                         :color           (or icon-color
+                                              (get-in themes
+                                                      [:icon (or override-theme (theme/get-theme))
+                                                       :color]))}])
+    :middle          text
+    :right           (if undo-duration
+                       [toast-undo-action undo-duration undo-on-press override-theme]
+                       action)
     :container-style container-style
-    :override-theme override-theme}])
+    :override-theme  override-theme}])
