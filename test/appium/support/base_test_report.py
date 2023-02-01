@@ -5,9 +5,8 @@ import os
 from hashlib import md5
 from sauceclient import SauceException
 import re
-
 from support.test_data import SingleTestData
-from tests.conftest import sauce, apibase
+
 
 class BaseTestReport:
     TEST_REPORT_DIR = "%s/../report" % os.path.dirname(os.path.abspath(__file__))
@@ -114,6 +113,7 @@ class BaseTestReport:
                '?BRANCH_NAME=%s&APK_NAME=%s&PR_ID=%s&TR_CASE_IDS=%s' % (branch_name, apk_name, pr_id, tr_case_ids)
 
     def get_sauce_final_screenshot_url(self, job_id):
+        from tests.conftest import sauce, apibase
         token = self.get_sauce_token(job_id)
         for _ in range(10):
             try:
