@@ -13,7 +13,7 @@
 
     <style name="LightTheme" parent="AppTheme">
         <item name="textColor">#000000</item>
-        <item name="backgroundColor">#ffffff</item>
+        <item name="backgroundColor">#000000</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
