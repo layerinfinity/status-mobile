@@ -82,14 +82,6 @@
                                                    :options (merge (status-bar-options)
                                                                    {:topBar (assoc (topbar-options) :visible false)})}}]
                            :options  {:bottomTab (bottom-tab-general :main-icons/message :home-tab-button)}}}
-                  ;BROWSER STACK
-                  {:stack {:id       :browser-stack
-                           :children [{:component {:name    :empty-tab
-                                                   :id      :empty-tab
-                                                   :options (merge (status-bar-options)
-                                                                   {:topBar (assoc (topbar-options) :visible false)})}}]
-
-                           :options  {:bottomTab (bottom-tab-general :main-icons/browser :dapp-tab-button)}}}
                   ;WALLET STACK
                   {:stack {:id       :wallet-stack
                            :children [{:component {:name    :wallet
@@ -104,13 +96,7 @@
                                                    :options (merge (status-bar-options)
                                                                    {:topBar (assoc (topbar-options) :visible false)})}}]
                            :options  {:bottomTab (bottom-tab-general :main-icons/status :status-tab-button)}}}
-                  ;PROFILE STACK
-                  {:stack {:id       :profile-stack
-                           :children [{:component {:name    :my-profile
-                                                   :id      :my-profile
-                                                   :options (merge (status-bar-options)
-                                                                   {:topBar (assoc (topbar-options) :visible false)})}}]
-                           :options  {:bottomTab (bottom-tab-general :main-icons/user-profile :profile-tab-button)}}}]}}}
+                  ]}}}
 
     ;;INTRO (onboarding carousel)
     :intro

@@ -238,7 +238,7 @@ PODS:
     - React
   - react-native-status (1.0.0):
     - React
-  - react-native-status-keycard (2.5.37):
+  - react-native-status-keycard (2.5.38):
     - Keycard
     - React
   - react-native-webview (11.16.0):
@@ -666,7 +666,7 @@ SPEC CHECKSUMS:
   react-native-shake: de052eaa3eadc4a326b8ddd7ac80c06e8d84528c
   react-native-slider: 12bd76d3d568c9c5500825db54123d44b48e4ad4
   react-native-status: 21f75d492fd311dc111303da38a7a2b23a8a8466
-  react-native-status-keycard: 961d01ca190889ddf220206822fd752f8f4f3f7a
+  react-native-status-keycard: f60ca57d789aad6875c64ece81ab06ef0609e0d3
   react-native-webview: 28a8636d97ee641f2ee8f20492d7a6c269c1d703
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -706,4 +706,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: a1de9468266e7f0b5273acea713782ab759690f1
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
