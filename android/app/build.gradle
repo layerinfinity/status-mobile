@@ -355,7 +355,7 @@ def getLocalNDKDir = { ->
 // puts all compile dependencies into folder libs for BUCK to use
 task hemroidBuild(type: Exec) {
     def localNdkDir = getLocalNDKDir()
-    def ndkDir = "/Users/doko/Library/Android/sdk/ndk/22.1.7171670"
+    def ndkDir = System.env.ANDROID_NDK_ROOT
     if (localNdkDir != null) {
         ndkDir = localNdkDir
     }
